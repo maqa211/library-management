@@ -1,62 +1,19 @@
 import json
 import os
 
-from models import Book, Member
+def load_data(file_path):
+    if not os.path.exists(file_path):
+        return []
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read().strip()
+            if not content:
+                return []
+            return json.loads(content)
+    except Exception:
+        return []
 
-
-class FileManager:
-    def __init__(self, data_folder="data"):
-        self.data_folder = data_folder
-
-        self.books_file = os.path.join(
-            self.data_folder,
-            "books.json"
-        )
-
-        self.members_file = os.path.join(
-            self.data_folder,
-            "members.json"
-        )
-
-        self.create_data_folder()
-
-    def create_data_folder(self):
-        os.makedirs(self.data_folder, exist_ok=True)
-
-    def save_books(self, books):
-        data = [book.to_dict() for book in books]
-
-        with open(self.books_file, "w", encoding="utf-8") as file:
-            json.dump(data, file, indent=4, ensure_ascii=False)
-
-    def load_books(self):
-        if not os.path.exists(self.books_file):
-            return []
-
-        try:
-            with open(self.books_file, "r", encoding="utf-8") as file:
-                data = json.load(file)
-
-            return [Book.from_dict(book) for book in data]
-
-        except (json.JSONDecodeError, KeyError):
-            return []
-
-    def save_members(self, members):
-        data = [member.to_dict() for member in members]
-
-        with open(self.members_file, "w", encoding="utf-8") as file:
-            json.dump(data, file, indent=4, ensure_ascii=False)
-
-    def load_members(self):
-        if not os.path.exists(self.members_file):
-            return []
-
-        try:
-            with open(self.members_file, "r", encoding="utf-8") as file:
-                data = json.load(file)
-
-            return [Member.from_dict(member) for member in data]
-
-        except (json.JSONDecodeError, KeyError):
-            return []
+def save_data(file_path, data):
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
