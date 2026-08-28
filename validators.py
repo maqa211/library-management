@@ -3,10 +3,13 @@ def validate_book(book_id, title, author, year, category):
         raise ValueError("Book ID cannot be empty.")
 
     if not title.strip():
-        raise ValueError("Book title cannot be empty.")
+        raise ValueError("Title cannot be empty.")
 
     if not author.strip():
         raise ValueError("Author cannot be empty.")
+
+    if not year.strip():
+        raise ValueError("Year cannot be empty.")
 
     if not category.strip():
         raise ValueError("Category cannot be empty.")
@@ -27,7 +30,7 @@ def validate_member(member_id, name, phone, email):
         raise ValueError("Member ID cannot be empty.")
 
     if not name.strip():
-        raise ValueError("Member name cannot be empty.")
+        raise ValueError("Name cannot be empty.")
 
     if not phone.strip():
         raise ValueError("Phone cannot be empty.")
@@ -36,6 +39,6 @@ def validate_member(member_id, name, phone, email):
         raise ValueError("Email cannot be empty.")
 
     if "@" not in email:
-        raise ValueError("Please enter a valid email.")
+        raise ValueError("Invalid email address.")
 
     return True
