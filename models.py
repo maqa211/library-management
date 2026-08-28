@@ -17,17 +17,6 @@ class Book:
             "availability": self.availability
         }
 
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            data["book_id"],
-            data["title"],
-            data["author"],
-            data["year"],
-            data["category"],
-            data["availability"]
-        )
-
 
 class Member:
     def __init__(self, member_id, name, phone, email, borrowed_books=None):
@@ -45,13 +34,3 @@ class Member:
             "email": self.email,
             "borrowed_books": self.borrowed_books
         }
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            data["member_id"],
-            data["name"],
-            data["phone"],
-            data["email"],
-            data.get("borrowed_books", [])
-        )
