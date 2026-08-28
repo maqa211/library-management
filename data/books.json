@@ -1,62 +1,82 @@
-[[
+[
   {
-    "memberId": "M001",
-    "name": "Ali Ahmadov",
-    "phone": "+994501234567",
-    "email": "ali.ahmadov@example.com"
+    "bookId": "B001",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "year": 1925,
+    "category": "Classic",
+    "availabilityStatus": "Available"
   },
   {
-    "memberId": "M002",
-    "name": "Leyla Mammadova",
-    "phone": "+994502345678",
-    "email": "leyla.mammadova@example.com"
+    "bookId": "B002",
+    "title": "1984",
+    "author": "George Orwell",
+    "year": 1949,
+    "category": "Dystopian",
+    "availabilityStatus": "Borrowed"
   },
   {
-    "memberId": "M003",
-    "name": "Murad Hasanov",
-    "phone": "+994503456789",
-    "email": "murad.hasanov@example.com"
+    "bookId": "B003",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "year": 1960,
+    "category": "Fiction",
+    "availabilityStatus": "Available"
   },
   {
-    "memberId": "M004",
-    "name": "Aysel Aliyeva",
-    "phone": "+994504567890",
-    "email": "aysel.aliyeva@example.com"
+    "bookId": "B004",
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "year": 1813,
+    "category": "Romance",
+    "availabilityStatus": "Available"
   },
   {
-    "memberId": "M005",
-    "name": "Rashad Karimov",
-    "phone": "+994505678901",
-    "email": "rashad.karimov@example.com"
+    "bookId": "B005",
+    "title": "The Hobbit",
+    "author": "J.R.R. Tolkien",
+    "year": 1937,
+    "category": "Fantasy",
+    "availabilityStatus": "Borrowed"
   },
   {
-    "memberId": "M006",
-    "name": "Nigar Huseynova",
-    "phone": "+994506789012",
-    "email": "nigar.huseynova@example.com"
+    "bookId": "B006",
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "year": 1988,
+    "category": "Adventure",
+    "availabilityStatus": "Available"
   },
   {
-    "memberId": "M007",
-    "name": "Tural Ismayilov",
-    "phone": "+994507890123",
-    "email": "tural.ismayilov@example.com"
+    "bookId": "B007",
+    "title": "Harry Potter and the Philosopher's Stone",
+    "author": "J.K. Rowling",
+    "year": 1997,
+    "category": "Fantasy",
+    "availabilityStatus": "Available"
   },
   {
-    "memberId": "M008",
-    "name": "Sabina Rahimova",
-    "phone": "+994508901234",
-    "email": "sabina.rahimova@example.com"
+    "bookId": "B008",
+    "title": "The Catcher in the Rye",
+    "author": "J.D. Salinger",
+    "year": 1951,
+    "category": "Fiction",
+    "availabilityStatus": "Borrowed"
   },
   {
-    "memberId": "M009",
-    "name": "Elvin Abdullayev",
-    "phone": "+994509012345",
-    "email": "elvin.abdullayev@example.com"
+    "bookId": "B009",
+    "title": "Animal Farm",
+    "author": "George Orwell",
+    "year": 1945,
+    "category": "Political Fiction",
+    "availabilityStatus": "Available"
   },
   {
-    "memberId": "M010",
-    "name": "Gunel Safarova",
-    "phone": "+994510123456",
-    "email": "gunel.safarova@example.com"
+    "bookId": "B010",
+    "title": "The Little Prince",
+    "author": "Antoine de Saint-Exupéry",
+    "year": 1943,
+    "category": "Children's Literature",
+    "availabilityStatus": "Available"
   }
 ]
