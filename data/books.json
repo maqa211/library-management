@@ -1,82 +1,82 @@
 [
   {
-    "bookId": "B001",
+    "book_id": "B001",
     "title": "The Great Gatsby",
     "author": "F. Scott Fitzgerald",
     "year": 1925,
     "category": "Classic",
-    "availabilityStatus": "Available"
+    "availability": true
   },
   {
-    "bookId": "B002",
+    "book_id": "B002",
     "title": "1984",
     "author": "George Orwell",
     "year": 1949,
     "category": "Dystopian",
-    "availabilityStatus": "Borrowed"
+    "availability": false
   },
   {
-    "bookId": "B003",
+    "book_id": "B003",
     "title": "To Kill a Mockingbird",
     "author": "Harper Lee",
     "year": 1960,
     "category": "Fiction",
-    "availabilityStatus": "Available"
+    "availability": true
   },
   {
-    "bookId": "B004",
+    "book_id": "B004",
     "title": "Pride and Prejudice",
     "author": "Jane Austen",
     "year": 1813,
     "category": "Romance",
-    "availabilityStatus": "Available"
+    "availability": true
   },
   {
-    "bookId": "B005",
+    "book_id": "B005",
     "title": "The Hobbit",
     "author": "J.R.R. Tolkien",
     "year": 1937,
     "category": "Fantasy",
-    "availabilityStatus": "Borrowed"
+    "availability": false
   },
   {
-    "bookId": "B006",
+    "book_id": "B006",
     "title": "The Alchemist",
     "author": "Paulo Coelho",
     "year": 1988,
     "category": "Adventure",
-    "availabilityStatus": "Available"
+    "availability": true
   },
   {
-    "bookId": "B007",
+    "book_id": "B007",
     "title": "Harry Potter and the Philosopher's Stone",
     "author": "J.K. Rowling",
     "year": 1997,
     "category": "Fantasy",
-    "availabilityStatus": "Available"
+    "availability": true
   },
   {
-    "bookId": "B008",
+    "book_id": "B008",
     "title": "The Catcher in the Rye",
     "author": "J.D. Salinger",
     "year": 1951,
     "category": "Fiction",
-    "availabilityStatus": "Borrowed"
+    "availability": false
   },
   {
-    "bookId": "B009",
+    "book_id": "B009",
     "title": "Animal Farm",
     "author": "George Orwell",
     "year": 1945,
     "category": "Political Fiction",
-    "availabilityStatus": "Available"
+    "availability": true
   },
   {
-    "bookId": "B010",
+    "book_id": "B010",
     "title": "The Little Prince",
     "author": "Antoine de Saint-Exupéry",
     "year": 1943,
     "category": "Children's Literature",
-    "availabilityStatus": "Available"
+    "availability": true
   }
 ]
