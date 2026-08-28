@@ -1,5 +1,5 @@
 import tkinter as tk
-from gui import LibraryGUI
+import gui
 
 
 root = tk.Tk()
