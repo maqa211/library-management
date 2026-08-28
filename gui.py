@@ -9,10 +9,8 @@ class LibraryGUI:
         self.root.title("Library Management System")
         self.root.geometry("850x600")
 
-        # Pəncərənin fon rəngini açıq mavi edirik
         self.root.configure(bg="#E0F2FE")
 
-        # Yuxarıda ortada başlığın əlavə edilməsi
         title_label = tk.Label(
             self.root, 
             text="Library Management", 
@@ -24,7 +22,7 @@ class LibraryGUI:
 
         self.library = Library()
 
-        # Style ayarları (Tabların arxa fonunun da uyğunlaşması üçün)
+    
         style = ttk.Style()
         style.theme_use("default")
         style.configure("TFrame", background="#E0F2FE")
@@ -32,7 +30,6 @@ class LibraryGUI:
         style.configure("TLabelframe.Label", background="#E0F2FE", font=("Arial", 10, "bold"))
         style.configure("TLabel", background="#E0F2FE", font=("Arial", 10))
 
-        # Tablar (Notebook)
         self.tabs = ttk.Notebook(self.root)
         self.tabs.pack(fill="both", expand=True, padx=10, pady=5)
 
@@ -54,7 +51,7 @@ class LibraryGUI:
         self.setup_search_page()
         self.setup_stats_page()
 
-    # --- 1. BOOKS PAGE ---
+ 
     def setup_books_page(self):
         frame = ttk.LabelFrame(self.tab_books, text="Book Details")
         frame.pack(fill="x", padx=10, pady=5)
@@ -126,7 +123,6 @@ class LibraryGUI:
         self.update_borrow_combos()
         messagebox.showinfo("Success", "Book deleted successfully!")
 
-    # --- 2. MEMBERS PAGE ---
     def setup_members_page(self):
         frame = ttk.LabelFrame(self.tab_members, text="Member Details")
         frame.pack(fill="x", padx=10, pady=5)
@@ -193,7 +189,6 @@ class LibraryGUI:
         self.update_borrow_combos()
         messagebox.showinfo("Success", "Member deleted successfully!")
 
-    # --- 3. BORROW / RETURN PAGE ---
     def setup_borrow_page(self):
         frame = ttk.LabelFrame(self.tab_borrow, text="Borrow or Return Book")
         frame.pack(padx=20, pady=20, fill="x")
@@ -233,7 +228,7 @@ class LibraryGUI:
         except ValueError as e:
             messagebox.showerror("Error", str(e))
 
-    # --- 4. SEARCH & SORT PAGE ---
+
     def setup_search_page(self):
         top_frame = ttk.Frame(self.tab_search)
         top_frame.pack(fill="x", padx=10, pady=10)
@@ -274,7 +269,6 @@ class LibraryGUI:
             status = "Available" if b.is_available else "Borrowed"
             self.tree_search.insert("", "end", values=(b.id, b.title, b.author, b.year, b.category, status))
 
-    # --- 5. STATISTICS PAGE ---
     def setup_stats_page(self):
         ttk.Button(self.tab_stats, text="Refresh Statistics", command=self.refresh_stats).pack(pady=15)
         self.label_stats = ttk.Label(self.tab_stats, text="", font=("Arial", 14), justify="left")
