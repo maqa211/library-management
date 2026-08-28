@@ -25,7 +25,7 @@ class Book:
             data["author"],
             data["year"],
             data["category"],
-            data.get("availability", True)
+            data["availability"]
         )
 
 
