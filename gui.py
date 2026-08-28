@@ -45,6 +45,26 @@ for i, x in enumerate(["ID", "Title", "Author", "Year", "Category"]):
     entries.append(e)
 
 
+book_list = ttk.Treeview(
+    books,
+    columns=["ID", "Title", "Author", "Year", "Category", "Status"],
+    show="headings",
+    height=15
+)
+
+for x in ["ID", "Title", "Author", "Year", "Category", "Status"]:
+    book_list.heading(x, text=x)
+    book_list.column(x, width=150)
+
+book_list.grid(
+    row=4,
+    column=0,
+    columnspan=6,
+    padx=15,
+    pady=15
+)
+
+
 def show_books(data=None):
     book_list.delete(*book_list.get_children())
 
@@ -118,6 +138,7 @@ tk.Button(
     books, text="Delete", width=12, command=delete_book
 ).grid(row=2, column=2, padx=5, pady=10)
 
+
 tk.Label(
     books,
     text="Search:",
@@ -130,24 +151,50 @@ search.grid(row=3, column=1, padx=5)
 
 
 def search_book():
-    def search_book():
     try:
-        value = search.get().strip()
+        value = search.get().strip().lower()
 
         if not value:
             show_books()
             return
 
-        books_found = [
+        found = [
             book for book in library.get_books()
-            if value.lower() in str(book["book_id"]).lower()
-            or value.lower() in book["title"].lower()
+            if value in str(book["book_id"]).lower()
+            or value in book["title"].lower()
         ]
 
-        show_books(books_found)
+        show_books(found)
 
     except ValueError as error:
         messagebox.showerror("Error", str(error))
+
+
+tk.Button(
+    books, text="Search", width=12, command=search_book
+).grid(row=3, column=2, padx=5)
+
+
+tk.Label(
+    books,
+    text="Sort:",
+    bg="lightblue",
+    font=("Arial", 10, "bold")
+).grid(row=3, column=3, padx=5)
+
+sort = ttk.Combobox(
+    books,
+    values=[
+        "Title A-Z",
+        "Author A-Z",
+        "Year Ascending",
+        "Year Descending",
+        "Category A-Z"
+    ],
+    state="readonly",
+    width=18
+)
+sort.grid(row=3, column=4, padx=5)
 
 
 def sort_books():
@@ -161,25 +208,6 @@ def sort_books():
 tk.Button(
     books, text="Sort", width=12, command=sort_books
 ).grid(row=3, column=5, padx=5)
-
-book_list = ttk.Treeview(
-    books,
-    columns=["ID", "Title", "Author", "Year", "Category", "Status"],
-    show="headings",
-    height=15
-)
-
-for x in ["ID", "Title", "Author", "Year", "Category", "Status"]:
-    book_list.heading(x, text=x)
-    book_list.column(x, width=150)
-
-book_list.grid(
-    row=4,
-    column=0,
-    columnspan=6,
-    padx=15,
-    pady=15
-)
 
 
 member_entries = []
@@ -351,15 +379,15 @@ tk.Button(
 
 
 def statistics():
-    stats_data = library.get_statistics()
+    data = library.get_statistics()
 
     messagebox.showinfo(
         "Statistics",
-        f"Total books: {stats_data['total_books']}\n"
-        f"Available: {stats_data['available_books']}\n"
-        f"Borrowed: {stats_data['borrowed_books']}\n"
-        f"Members: {stats_data['total_members']}\n"
-        f"Top category: {stats_data['most_common_category']}"
+        f"Total books: {data['total_books']}\n"
+        f"Available: {data['available_books']}\n"
+        f"Borrowed: {data['borrowed_books']}\n"
+        f"Members: {data['total_members']}\n"
+        f"Top category: {data['most_common_category']}"
     )
 
 
