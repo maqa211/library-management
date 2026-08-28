@@ -4,7 +4,6 @@ from models import Book, Member
 from library import Library
 
 library = Library()
-
 root = tk.Tk()
 root.title("Library Management")
 root.geometry("1000x650")
@@ -14,146 +13,197 @@ tk.Label(root, text="Library Management", font=("Arial", 22, "bold"),
          bg="lightblue").pack(pady=10)
 
 tabs = ttk.Notebook(root)
-tabs.pack(fill="both", expand=True, padx=10, pady=5)
+tabs.pack(fill="both", expand=True)
 
-books_tab = tk.Frame(tabs, bg="lightblue")
-members_tab = tk.Frame(tabs, bg="lightblue")
-borrow_tab = tk.Frame(tabs, bg="lightblue")
-stats_tab = tk.Frame(tabs, bg="lightblue")
+books = tk.Frame(tabs, bg="lightblue")
+members = tk.Frame(tabs, bg="lightblue")
+borrow = tk.Frame(tabs, bg="lightblue")
+stats = tk.Frame(tabs, bg="lightblue")
 
-tabs.add(books_tab, text="Books")
-tabs.add(members_tab, text="Members")
-tabs.add(borrow_tab, text="Borrow / Return")
-tabs.add(stats_tab, text="Statistics")
+tabs.add(books, text="Books")
+tabs.add(members, text="Members")
+tabs.add(borrow, text="Borrow / Return")
+tabs.add(stats, text="Statistics")
 
-book_fields = ["ID", "Title", "Author", "Year", "Category"]
-book_entries = []
+be = []
+for i, x in enumerate(["ID", "Title", "Author", "Year", "Category"]):
+    tk.Label(books, text=x, bg="lightblue").grid(row=0, column=i)
+    e = tk.Entry(books, width=17)
+    e.grid(row=1, column=i)
+    be.append(e)
 
-for i, field in enumerate(book_fields):
-    tk.Label(books_tab, text=field, bg="lightblue").grid(row=0, column=i)
-    e = tk.Entry(books_tab, width=18)
-    e.grid(row=1, column=i, padx=3)
-    book_entries.append(e)
+bt = ttk.Treeview(books, columns=["ID", "Title", "Author", "Year", "Category", "Status"],
+                  show="headings", height=15)
+for x in ["ID", "Title", "Author", "Year", "Category", "Status"]:
+    bt.heading(x, text=x)
+    bt.column(x, width=145)
+bt.grid(row=4, column=0, columnspan=5)
 
-book_tree = ttk.Treeview(books_tab, columns=book_fields, show="headings", height=15)
-for field in book_fields:
-    book_tree.heading(field, text=field)
-    book_tree.column(field, width=150)
-book_tree.grid(row=3, column=0, columnspan=5, pady=10)
 
-def show_books(books=None):
-    book_tree.delete(*book_tree.get_children())
-    for b in books or library.get_books():
-        book_tree.insert("", "end", values=(
-            b["book_id"], b["title"], b["author"], b["year"],
-            b["category"], "Available" if b["availability"] else "Borrowed"
-        ))
+def show_books(data=None):
+    bt.delete(*bt.get_children())
+    for b in library.get_books() if data is None else data:
+        bt.insert("", "end", values=(b["book_id"], b["title"], b["author"],
+                      b["year"], b["category"],
+                      "Available" if b["availability"] else "Borrowed"))
+
 
 def add_book():
     try:
-        e = book_entries
-        if not all(x.get().strip() for x in e):
-            raise ValueError("All fields are required.")
-        year = int(e[3].get())
-        library.add_book(Book(e[0].get(), e[1].get(), e[2].get(),
-                              year, e[4].get()))
+        if not all(x.get().strip() for x in be):
+            raise ValueError("All fields are required")
+        library.add_book(Book(be[0].get(), be[1].get(), be[2].get(),
+                              int(be[3].get()), be[4].get()))
         show_books()
-        messagebox.showinfo("Success", "Book added.")
-    except ValueError as error:
-        messagebox.showerror("Error", str(error))
+        messagebox.showinfo("Success", "Book added")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
 
-tk.Button(books_tab, text="Add Book", command=add_book).grid(row=2, column=0)
 
-search = tk.Entry(books_tab, width=20)
-search.grid(row=2, column=1)
-
-def search_books():
+def edit_book():
     try:
-        result = library.search_books("Title", search.get())
-        show_books(result)
-    except ValueError as error:
-        messagebox.showerror("Error", str(error))
+        library.edit_book(be[0].get(), be[1].get(), be[2].get(),
+                          int(be[3].get()), be[4].get())
+        show_books()
+        messagebox.showinfo("Success", "Book updated")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
 
-tk.Button(books_tab, text="Search", command=search_books).grid(row=2, column=2)
 
-sort_box = ttk.Combobox(books_tab, values=["Title A-Z", "Author A-Z",
-    "Year Ascending", "Year Descending", "Category A-Z"], state="readonly")
-sort_box.grid(row=2, column=3)
+def delete_book():
+    try:
+        library.delete_book(be[0].get())
+        show_books()
+        messagebox.showinfo("Success", "Book deleted")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
 
-def sort_books():
-    show_books(library.sort_books(sort_box.get()))
 
-tk.Button(books_tab, text="Sort", command=sort_books).grid(row=2, column=4)
+tk.Button(books, text="Add", command=add_book).grid(row=2, column=0)
+tk.Button(books, text="Edit", command=edit_book).grid(row=2, column=1)
+tk.Button(books, text="Delete", command=delete_book).grid(row=2, column=2)
 
-member_fields = ["ID", "Name", "Phone", "Email"]
-member_entries = []
+search = tk.Entry(books, width=18)
+search.grid(row=2, column=3)
 
-for i, field in enumerate(member_fields):
-    tk.Label(members_tab, text=field, bg="lightblue").grid(row=0, column=i)
-    e = tk.Entry(members_tab, width=22)
+
+def search_book():
+    try:
+        show_books(library.search_books("Title", search.get()))
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+
+
+tk.Button(books, text="Search", command=search_book).grid(row=2, column=4)
+
+sort = ttk.Combobox(books, values=["Title A-Z", "Author A-Z",
+    "Year Ascending", "Year Descending", "Category A-Z"],
+    state="readonly", width=17)
+sort.grid(row=3, column=3)
+tk.Button(books, text="Sort",
+          command=lambda: show_books(library.sort_books(sort.get()))).grid(row=3, column=4)
+
+me = []
+for i, x in enumerate(["ID", "Name", "Phone", "Email"]):
+    tk.Label(members, text=x, bg="lightblue").grid(row=0, column=i)
+    e = tk.Entry(members, width=22)
     e.grid(row=1, column=i)
-    member_entries.append(e)
+    me.append(e)
 
-member_tree = ttk.Treeview(members_tab, columns=member_fields, show="headings")
-for field in member_fields:
-    member_tree.heading(field, text=field)
-    member_tree.column(field, width=180)
-member_tree.grid(row=3, column=0, columnspan=4, pady=10)
+mt = ttk.Treeview(members, columns=["ID", "Name", "Phone", "Email"],
+                  show="headings", height=15)
+for x in ["ID", "Name", "Phone", "Email"]:
+    mt.heading(x, text=x)
+    mt.column(x, width=180)
+mt.grid(row=4, column=0, columnspan=4)
+
 
 def show_members():
-    member_tree.delete(*member_tree.get_children())
+    mt.delete(*mt.get_children())
     for m in library.get_members():
-        member_tree.insert("", "end", values=(
-            m["member_id"], m["name"], m["phone"], m["email"]))
+        mt.insert("", "end", values=(m["member_id"], m["name"],
+                    m["phone"], m["email"]))
+
 
 def add_member():
     try:
-        e = member_entries
-        if not all(x.get().strip() for x in e):
-            raise ValueError("All fields are required.")
-        library.add_member(Member(e[0].get(), e[1].get(), e[2].get(), e[3].get()))
+        if not all(x.get().strip() for x in me):
+            raise ValueError("All fields are required")
+        library.add_member(Member(me[0].get(), me[1].get(),
+                                   me[2].get(), me[3].get()))
         show_members()
-        messagebox.showinfo("Success", "Member added.")
-    except ValueError as error:
-        messagebox.showerror("Error", str(error))
+        messagebox.showinfo("Success", "Member added")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
 
-tk.Button(members_tab, text="Add Member", command=add_member).grid(row=2, column=0)
 
-tk.Label(borrow_tab, text="Member ID", bg="lightblue").grid(row=0, column=0)
-member_id = tk.Entry(borrow_tab)
-member_id.grid(row=0, column=1)
-
-tk.Label(borrow_tab, text="Book ID", bg="lightblue").grid(row=1, column=0)
-book_id = tk.Entry(borrow_tab)
-book_id.grid(row=1, column=1)
-
-def borrow():
+def edit_member():
     try:
-        library.borrow_book(member_id.get(), book_id.get())
+        library.edit_member(me[0].get(), me[1].get(),
+                             me[2].get(), me[3].get())
+        show_members()
+        messagebox.showinfo("Success", "Member updated")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+
+
+def delete_member():
+    try:
+        library.delete_member(me[0].get())
+        show_members()
+        messagebox.showinfo("Success", "Member deleted")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+
+
+tk.Button(members, text="Add", command=add_member).grid(row=2, column=0)
+tk.Button(members, text="Edit", command=edit_member).grid(row=2, column=1)
+tk.Button(members, text="Delete", command=delete_member).grid(row=2, column=2)
+
+tk.Label(borrow, text="Member ID", bg="lightblue").grid(row=0, column=0)
+mid = tk.Entry(borrow)
+mid.grid(row=0, column=1)
+
+tk.Label(borrow, text="Book ID", bg="lightblue").grid(row=1, column=0)
+bid = tk.Entry(borrow)
+bid.grid(row=1, column=1)
+
+
+def borrow_book():
+    try:
+        library.borrow_book(mid.get(), bid.get())
         show_books()
-        messagebox.showinfo("Success", "Book borrowed.")
-    except ValueError as error:
-        messagebox.showerror("Error", str(error))
+        show_members()
+        messagebox.showinfo("Success", "Book borrowed")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+
 
 def return_book():
     try:
-        library.return_book(member_id.get(), book_id.get())
+        library.return_book(mid.get(), bid.get())
         show_books()
-        messagebox.showinfo("Success", "Book returned.")
-    except ValueError as error:
-        messagebox.showerror("Error", str(error))
+        show_members()
+        messagebox.showinfo("Success", "Book returned")
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
 
-tk.Button(borrow_tab, text="Borrow Book", command=borrow).grid(row=2, column=0)
-tk.Button(borrow_tab, text="Return Book", command=return_book).grid(row=2, column=1)
+
+tk.Button(borrow, text="Borrow", command=borrow_book).grid(row=2, column=0)
+tk.Button(borrow, text="Return", command=return_book).grid(row=2, column=1)
+
 
 def statistics():
     s = library.get_statistics()
-    text = f"Total books: {s['total_books']}\nAvailable books: {s['available_books']}\n"
-    text += f"Borrowed books: {s['borrowed_books']}\nTotal members: {s['total_members']}\n"
-    text += f"Most common category: {s['most_common_category']}"
-    messagebox.showinfo("Statistics", text)
+    messagebox.showinfo("Statistics",
+        f"Total books: {s['total_books']}\n"
+        f"Available: {s['available_books']}\n"
+        f"Borrowed: {s['borrowed_books']}\n"
+        f"Members: {s['total_members']}\n"
+        f"Top category: {s['most_common_category']}")
 
-tk.Button(stats_tab, text="Show Statistics", command=statistics).pack(pady=40)
+
+tk.Button(stats, text="Show Statistics", command=statistics).pack(pady=40)
 
 show_books()
 show_members()
