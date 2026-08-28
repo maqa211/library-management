@@ -11,7 +11,7 @@
     "name": "Leyla Mammadova",
     "phone": "+994502345678",
     "email": "leyla.mammadova@example.com",
-    "borrowed_books": ["B002"]
+    "borrowed_books": []
   },
   {
     "member_id": "M003",
@@ -32,7 +32,7 @@
     "name": "Rashad Karimov",
     "phone": "+994505678901",
     "email": "rashad.karimov@example.com",
-    "borrowed_books": ["B005"]
+    "borrowed_books": []
   },
   {
     "member_id": "M006",
@@ -53,7 +53,7 @@
     "name": "Sabina Rahimova",
     "phone": "+994508901234",
     "email": "sabina.rahimova@example.com",
-    "borrowed_books": ["B008"]
+    "borrowed_books": []
   },
   {
     "member_id": "M009",
