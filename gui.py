@@ -10,9 +10,12 @@ window.title("Library Management")
 window.geometry("1050x680")
 window.configure(bg="lightblue")
 
-tk.Label(window, text="Library Management",
-         font=("Arial", 24, "bold"),
-         bg="lightblue").pack(pady=15)
+tk.Label(
+    window,
+    text="Library Management",
+    font=("Arial", 24, "bold"),
+    bg="lightblue"
+).pack(pady=15)
 
 tabs = ttk.Notebook(window)
 tabs.pack(fill="both", expand=True, padx=15, pady=10)
@@ -30,9 +33,12 @@ tabs.add(stats, text="Statistics")
 entries = []
 
 for i, x in enumerate(["ID", "Title", "Author", "Year", "Category"]):
-    tk.Label(books, text=x, bg="lightblue",
-             font=("Arial", 10, "bold")).grid(
-             row=0, column=i, padx=8, pady=5)
+    tk.Label(
+        books,
+        text=x,
+        bg="lightblue",
+        font=("Arial", 10, "bold")
+    ).grid(row=0, column=i, padx=8, pady=5)
 
     e = tk.Entry(books, width=18)
     e.grid(row=1, column=i, padx=8, pady=5)
@@ -40,10 +46,10 @@ for i, x in enumerate(["ID", "Title", "Author", "Year", "Category"]):
 
 
 def show_books(data=None):
-    book_tree.delete(*book_tree.get_children())
+    book_list.delete(*book_list.get_children())
 
     for book in library.get_books() if data is None else data:
-        book_tree.insert("", "end", values=(
+        book_list.insert("", "end", values=(
             book["book_id"],
             book["title"],
             book["author"],
@@ -100,18 +106,24 @@ def delete_book():
         messagebox.showerror("Error", str(error))
 
 
-tk.Button(books, text="Add", width=12,
-          command=add_book).grid(row=2, column=0, padx=5, pady=10)
+tk.Button(
+    books, text="Add", width=12, command=add_book
+).grid(row=2, column=0, padx=5, pady=10)
 
-tk.Button(books, text="Edit", width=12,
-          command=edit_book).grid(row=2, column=1, padx=5, pady=10)
+tk.Button(
+    books, text="Edit", width=12, command=edit_book
+).grid(row=2, column=1, padx=5, pady=10)
 
-tk.Button(books, text="Delete", width=12,
-          command=delete_book).grid(row=2, column=2, padx=5, pady=10)
+tk.Button(
+    books, text="Delete", width=12, command=delete_book
+).grid(row=2, column=2, padx=5, pady=10)
 
-tk.Label(books, text="Search:", bg="lightblue",
-         font=("Arial", 10, "bold")).grid(
-         row=3, column=0, padx=5, pady=10)
+tk.Label(
+    books,
+    text="Search:",
+    bg="lightblue",
+    font=("Arial", 10, "bold")
+).grid(row=3, column=0, padx=5, pady=10)
 
 search = tk.Entry(books, width=20)
 search.grid(row=3, column=1, padx=5)
@@ -119,18 +131,24 @@ search.grid(row=3, column=1, padx=5)
 
 def search_book():
     try:
-        show_books(library.search_books("Title", search.get()))
+        show_books(
+            library.search_books("Title", search.get())
+        )
 
     except ValueError as error:
         messagebox.showerror("Error", str(error))
 
 
-tk.Button(books, text="Search", width=12,
-          command=search_book).grid(row=3, column=2, padx=5)
+tk.Button(
+    books, text="Search", width=12, command=search_book
+).grid(row=3, column=2, padx=5)
 
-tk.Label(books, text="Sort:", bg="lightblue",
-         font=("Arial", 10, "bold")).grid(
-         row=3, column=3, padx=5)
+tk.Label(
+    books,
+    text="Sort:",
+    bg="lightblue",
+    font=("Arial", 10, "bold")
+).grid(row=3, column=3, padx=5)
 
 sort = ttk.Combobox(
     books,
@@ -155,10 +173,11 @@ def sort_books():
         messagebox.showerror("Error", str(error))
 
 
-tk.Button(books, text="Sort", width=12,
-          command=sort_books).grid(row=3, column=5, padx=5)
+tk.Button(
+    books, text="Sort", width=12, command=sort_books
+).grid(row=3, column=5, padx=5)
 
-book_tree = ttk.Treeview(
+book_list = ttk.Treeview(
     books,
     columns=["ID", "Title", "Author", "Year", "Category", "Status"],
     show="headings",
@@ -166,32 +185,62 @@ book_tree = ttk.Treeview(
 )
 
 for x in ["ID", "Title", "Author", "Year", "Category", "Status"]:
-    book_tree.heading(x, text=x)
-    book_tree.column(x, width=150)
+    book_list.heading(x, text=x)
+    book_list.column(x, width=150)
 
-book_tree.grid(row=4, column=0, columnspan=6, padx=15, pady=15)
+book_list.grid(
+    row=4,
+    column=0,
+    columnspan=6,
+    padx=15,
+    pady=15
+)
+
 
 member_entries = []
 
 for i, x in enumerate(["ID", "Name", "Phone", "Email"]):
-    tk.Label(members, text=x, bg="lightblue",
-             font=("Arial", 10, "bold")).grid(
-             row=0, column=i, padx=10, pady=5)
+    tk.Label(
+        members,
+        text=x,
+        bg="lightblue",
+        font=("Arial", 10, "bold")
+    ).grid(row=0, column=i, padx=10, pady=5)
 
     e = tk.Entry(members, width=22)
     e.grid(row=1, column=i, padx=10, pady=5)
     member_entries.append(e)
 
 
+member_list = ttk.Treeview(
+    members,
+    columns=["ID", "Name", "Phone", "Email", "Borrowed Books"],
+    show="headings",
+    height=15
+)
+
+for x in ["ID", "Name", "Phone", "Email", "Borrowed Books"]:
+    member_list.heading(x, text=x)
+    member_list.column(x, width=170)
+
+member_list.grid(
+    row=4,
+    column=0,
+    columnspan=5,
+    padx=15,
+    pady=15
+)
+
+
 def show_members():
-    member_tree.delete(*member_tree.get_children())
+    member_list.delete(*member_list.get_children())
 
     for member in library.get_members():
         borrowed = ", ".join(
             member["borrowed_books"]
         ) if member["borrowed_books"] else "-"
 
-        member_tree.insert("", "end", values=(
+        member_list.insert("", "end", values=(
             member["member_id"],
             member["name"],
             member["phone"],
@@ -245,25 +294,35 @@ def delete_member():
         messagebox.showerror("Error", str(error))
 
 
-tk.Button(members, text="Add", width=12,
-          command=add_member).grid(row=2, column=0, padx=5, pady=10)
+tk.Button(
+    members, text="Add", width=12, command=add_member
+).grid(row=2, column=0, padx=5, pady=10)
 
-tk.Button(members, text="Edit", width=12,
-          command=edit_member).grid(row=2, column=1, padx=5, pady=10)
+tk.Button(
+    members, text="Edit", width=12, command=edit_member
+).grid(row=2, column=1, padx=5, pady=10)
 
-tk.Button(members, text="Delete", width=12,
-          command=delete_member).grid(row=2, column=2, padx=5, pady=10)
+tk.Button(
+    members, text="Delete", width=12, command=delete_member
+).grid(row=2, column=2, padx=5, pady=10)
 
-tk.Label(borrow, text="Member ID", bg="lightblue",
-         font=("Arial", 10, "bold")).grid(
-         row=0, column=0, padx=15, pady=15)
+
+tk.Label(
+    borrow,
+    text="Member ID",
+    bg="lightblue",
+    font=("Arial", 10, "bold")
+).grid(row=0, column=0, padx=15, pady=15)
 
 member_id = tk.Entry(borrow, width=25)
 member_id.grid(row=0, column=1)
 
-tk.Label(borrow, text="Book ID", bg="lightblue",
-         font=("Arial", 10, "bold")).grid(
-         row=1, column=0, padx=15, pady=15)
+tk.Label(
+    borrow,
+    text="Book ID",
+    bg="lightblue",
+    font=("Arial", 10, "bold")
+).grid(row=1, column=0, padx=15, pady=15)
 
 book_id = tk.Entry(borrow, width=25)
 book_id.grid(row=1, column=1)
@@ -291,13 +350,19 @@ def return_book():
         messagebox.showerror("Error", str(error))
 
 
-tk.Button(borrow, text="Borrow Book", width=15,
-          command=borrow_book).grid(
-          row=2, column=0, padx=10, pady=15)
+tk.Button(
+    borrow,
+    text="Borrow Book",
+    width=15,
+    command=borrow_book
+).grid(row=2, column=0, padx=10, pady=15)
 
-tk.Button(borrow, text="Return Book", width=15,
-          command=return_book).grid(
-          row=2, column=1, padx=10, pady=15)
+tk.Button(
+    borrow,
+    text="Return Book",
+    width=15,
+    command=return_book
+).grid(row=2, column=1, padx=10, pady=15)
 
 
 def statistics():
@@ -313,8 +378,12 @@ def statistics():
     )
 
 
-tk.Button(stats, text="Show Statistics", width=18,
-          command=statistics).pack(pady=50)
+tk.Button(
+    stats,
+    text="Show Statistics",
+    width=18,
+    command=statistics
+).pack(pady=50)
 
 show_books()
 show_members()
