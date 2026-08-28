@@ -3,288 +3,158 @@ from tkinter import ttk, messagebox
 from models import Book, Member
 from library import Library
 
-class LibraryGUI:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Library Management System")
-        self.root.geometry("850x600")
+library = Library()
 
-        self.root.configure(bg="#E0F2FE")
+root = tk.Tk()
+root.title("Library Management")
+root.geometry("1000x650")
+root.configure(bg="lightblue")
 
-        title_label = tk.Label(
-            self.root, 
-            text="Library Management", 
-            font=("Arial", 20, "bold"), 
-            bg="#E0F2FE", 
-            fg="#0F172A"
-        )
-        title_label.pack(pady=10)
+tk.Label(root, text="Library Management", font=("Arial", 22, "bold"),
+         bg="lightblue").pack(pady=10)
 
-        self.library = Library()
+tabs = ttk.Notebook(root)
+tabs.pack(fill="both", expand=True, padx=10, pady=5)
 
-    
-        style = ttk.Style()
-        style.theme_use("default")
-        style.configure("TFrame", background="#E0F2FE")
-        style.configure("TLabelframe", background="#E0F2FE")
-        style.configure("TLabelframe.Label", background="#E0F2FE", font=("Arial", 10, "bold"))
-        style.configure("TLabel", background="#E0F2FE", font=("Arial", 10))
+books_tab = tk.Frame(tabs, bg="lightblue")
+members_tab = tk.Frame(tabs, bg="lightblue")
+borrow_tab = tk.Frame(tabs, bg="lightblue")
+stats_tab = tk.Frame(tabs, bg="lightblue")
 
-        self.tabs = ttk.Notebook(self.root)
-        self.tabs.pack(fill="both", expand=True, padx=10, pady=5)
+tabs.add(books_tab, text="Books")
+tabs.add(members_tab, text="Members")
+tabs.add(borrow_tab, text="Borrow / Return")
+tabs.add(stats_tab, text="Statistics")
 
-        self.tab_books = ttk.Frame(self.tabs)
-        self.tab_members = ttk.Frame(self.tabs)
-        self.tab_borrow = ttk.Frame(self.tabs)
-        self.tab_search = ttk.Frame(self.tabs)
-        self.tab_stats = ttk.Frame(self.tabs)
+book_fields = ["ID", "Title", "Author", "Year", "Category"]
+book_entries = []
 
-        self.tabs.add(self.tab_books, text="Books")
-        self.tabs.add(self.tab_members, text="Members")
-        self.tabs.add(self.tab_borrow, text="Borrow / Return")
-        self.tabs.add(self.tab_search, text="Search & Sort")
-        self.tabs.add(self.tab_stats, text="Statistics")
+for i, field in enumerate(book_fields):
+    tk.Label(books_tab, text=field, bg="lightblue").grid(row=0, column=i)
+    e = tk.Entry(books_tab, width=18)
+    e.grid(row=1, column=i, padx=3)
+    book_entries.append(e)
 
-        self.setup_books_page()
-        self.setup_members_page()
-        self.setup_borrow_page()
-        self.setup_search_page()
-        self.setup_stats_page()
+book_tree = ttk.Treeview(books_tab, columns=book_fields, show="headings", height=15)
+for field in book_fields:
+    book_tree.heading(field, text=field)
+    book_tree.column(field, width=150)
+book_tree.grid(row=3, column=0, columnspan=5, pady=10)
 
- 
-    def setup_books_page(self):
-        frame = ttk.LabelFrame(self.tab_books, text="Book Details")
-        frame.pack(fill="x", padx=10, pady=5)
+def show_books(books=None):
+    book_tree.delete(*book_tree.get_children())
+    for b in books or library.get_books():
+        book_tree.insert("", "end", values=(
+            b["book_id"], b["title"], b["author"], b["year"],
+            b["category"], "Available" if b["availability"] else "Borrowed"
+        ))
 
-        ttk.Label(frame, text="Book ID:").grid(row=0, column=0, padx=5, pady=5)
-        self.entry_b_id = ttk.Entry(frame)
-        self.entry_b_id.grid(row=0, column=1)
+def add_book():
+    try:
+        e = book_entries
+        if not all(x.get().strip() for x in e):
+            raise ValueError("All fields are required.")
+        year = int(e[3].get())
+        library.add_book(Book(e[0].get(), e[1].get(), e[2].get(),
+                              year, e[4].get()))
+        show_books()
+        messagebox.showinfo("Success", "Book added.")
+    except ValueError as error:
+        messagebox.showerror("Error", str(error))
 
-        ttk.Label(frame, text="Title:").grid(row=0, column=2, padx=5, pady=5)
-        self.entry_b_title = ttk.Entry(frame)
-        self.entry_b_title.grid(row=0, column=3)
+tk.Button(books_tab, text="Add Book", command=add_book).grid(row=2, column=0)
 
-        ttk.Label(frame, text="Author:").grid(row=1, column=0, padx=5, pady=5)
-        self.entry_b_author = ttk.Entry(frame)
-        self.entry_b_author.grid(row=1, column=1)
+search = tk.Entry(books_tab, width=20)
+search.grid(row=2, column=1)
 
-        ttk.Label(frame, text="Year:").grid(row=1, column=2, padx=5, pady=5)
-        self.entry_b_year = ttk.Entry(frame)
-        self.entry_b_year.grid(row=1, column=3)
+def search_books():
+    try:
+        result = library.search_books("Title", search.get())
+        show_books(result)
+    except ValueError as error:
+        messagebox.showerror("Error", str(error))
 
-        ttk.Label(frame, text="Category:").grid(row=2, column=0, padx=5, pady=5)
-        self.entry_b_cat = ttk.Entry(frame)
-        self.entry_b_cat.grid(row=2, column=1)
+tk.Button(books_tab, text="Search", command=search_books).grid(row=2, column=2)
 
-        btn_frame = ttk.Frame(self.tab_books)
-        btn_frame.pack(pady=5)
+sort_box = ttk.Combobox(books_tab, values=["Title A-Z", "Author A-Z",
+    "Year Ascending", "Year Descending", "Category A-Z"], state="readonly")
+sort_box.grid(row=2, column=3)
 
-        ttk.Button(btn_frame, text="Add Book", command=self.add_book).pack(side="left", padx=5)
-        ttk.Button(btn_frame, text="Delete Book", command=self.delete_book).pack(side="left", padx=5)
+def sort_books():
+    show_books(library.sort_books(sort_box.get()))
 
-        self.tree_books = ttk.Treeview(self.tab_books, columns=("ID", "Title", "Author", "Year", "Category", "Status"), show="headings")
-        for col in ("ID", "Title", "Author", "Year", "Category", "Status"):
-            self.tree_books.heading(col, text=col)
-            self.tree_books.column(col, width=120)
-        self.tree_books.pack(fill="both", expand=True, padx=10, pady=5)
+tk.Button(books_tab, text="Sort", command=sort_books).grid(row=2, column=4)
 
-        self.refresh_books_table(self.library.books)
+member_fields = ["ID", "Name", "Phone", "Email"]
+member_entries = []
 
-    def refresh_books_table(self, book_list):
-        for item in self.tree_books.get_children():
-            self.tree_books.delete(item)
-        for b in book_list:
-            status = "Available" if b.is_available else "Borrowed"
-            self.tree_books.insert("", "end", values=(b.id, b.title, b.author, b.year, b.category, status))
+for i, field in enumerate(member_fields):
+    tk.Label(members_tab, text=field, bg="lightblue").grid(row=0, column=i)
+    e = tk.Entry(members_tab, width=22)
+    e.grid(row=1, column=i)
+    member_entries.append(e)
 
-    def add_book(self):
-        try:
-            self.library.add_book(
-                self.entry_b_id.get(),
-                self.entry_b_title.get(),
-                self.entry_b_author.get(),
-                self.entry_b_year.get(),
-                self.entry_b_cat.get()
-            )
-            messagebox.showinfo("Success", "Book added successfully!")
-            self.refresh_books_table(self.library.books)
-            self.update_borrow_combos()
-        except ValueError as e:
-            messagebox.showerror("Error", str(e))
+member_tree = ttk.Treeview(members_tab, columns=member_fields, show="headings")
+for field in member_fields:
+    member_tree.heading(field, text=field)
+    member_tree.column(field, width=180)
+member_tree.grid(row=3, column=0, columnspan=4, pady=10)
 
-    def delete_book(self):
-        selected = self.tree_books.selection()
-        if not selected:
-            messagebox.showwarning("Warning", "Please select a book from table!")
-            return
-        book_id = self.tree_books.item(selected[0])['values'][0]
-        self.library.delete_book(book_id)
-        self.refresh_books_table(self.library.books)
-        self.update_borrow_combos()
-        messagebox.showinfo("Success", "Book deleted successfully!")
+def show_members():
+    member_tree.delete(*member_tree.get_children())
+    for m in library.get_members():
+        member_tree.insert("", "end", values=(
+            m["member_id"], m["name"], m["phone"], m["email"]))
 
-    def setup_members_page(self):
-        frame = ttk.LabelFrame(self.tab_members, text="Member Details")
-        frame.pack(fill="x", padx=10, pady=5)
+def add_member():
+    try:
+        e = member_entries
+        if not all(x.get().strip() for x in e):
+            raise ValueError("All fields are required.")
+        library.add_member(Member(e[0].get(), e[1].get(), e[2].get(), e[3].get()))
+        show_members()
+        messagebox.showinfo("Success", "Member added.")
+    except ValueError as error:
+        messagebox.showerror("Error", str(error))
 
-        ttk.Label(frame, text="Member ID:").grid(row=0, column=0, padx=5, pady=5)
-        self.entry_m_id = ttk.Entry(frame)
-        self.entry_m_id.grid(row=0, column=1)
+tk.Button(members_tab, text="Add Member", command=add_member).grid(row=2, column=0)
 
-        ttk.Label(frame, text="Name:").grid(row=0, column=2, padx=5, pady=5)
-        self.entry_m_name = ttk.Entry(frame)
-        self.entry_m_name.grid(row=0, column=3)
+tk.Label(borrow_tab, text="Member ID", bg="lightblue").grid(row=0, column=0)
+member_id = tk.Entry(borrow_tab)
+member_id.grid(row=0, column=1)
 
-        ttk.Label(frame, text="Phone:").grid(row=1, column=0, padx=5, pady=5)
-        self.entry_m_phone = ttk.Entry(frame)
-        self.entry_m_phone.grid(row=1, column=1)
+tk.Label(borrow_tab, text="Book ID", bg="lightblue").grid(row=1, column=0)
+book_id = tk.Entry(borrow_tab)
+book_id.grid(row=1, column=1)
 
-        ttk.Label(frame, text="Email:").grid(row=1, column=2, padx=5, pady=5)
-        self.entry_m_email = ttk.Entry(frame)
-        self.entry_m_email.grid(row=1, column=3)
+def borrow():
+    try:
+        library.borrow_book(member_id.get(), book_id.get())
+        show_books()
+        messagebox.showinfo("Success", "Book borrowed.")
+    except ValueError as error:
+        messagebox.showerror("Error", str(error))
 
-        btn_frame = ttk.Frame(self.tab_members)
-        btn_frame.pack(pady=5)
+def return_book():
+    try:
+        library.return_book(member_id.get(), book_id.get())
+        show_books()
+        messagebox.showinfo("Success", "Book returned.")
+    except ValueError as error:
+        messagebox.showerror("Error", str(error))
 
-        ttk.Button(btn_frame, text="Add Member", command=self.add_member).pack(side="left", padx=5)
-        ttk.Button(btn_frame, text="Delete Member", command=self.delete_member).pack(side="left", padx=5)
+tk.Button(borrow_tab, text="Borrow Book", command=borrow).grid(row=2, column=0)
+tk.Button(borrow_tab, text="Return Book", command=return_book).grid(row=2, column=1)
 
-        self.tree_members = ttk.Treeview(self.tab_members, columns=("ID", "Name", "Phone", "Email", "Borrowed Books"), show="headings")
-        for col in ("ID", "Name", "Phone", "Email", "Borrowed Books"):
-            self.tree_members.heading(col, text=col)
-            self.tree_members.column(col, width=140)
-        self.tree_members.pack(fill="both", expand=True, padx=10, pady=5)
+def statistics():
+    s = library.get_statistics()
+    text = f"Total books: {s['total_books']}\nAvailable books: {s['available_books']}\n"
+    text += f"Borrowed books: {s['borrowed_books']}\nTotal members: {s['total_members']}\n"
+    text += f"Most common category: {s['most_common_category']}"
+    messagebox.showinfo("Statistics", text)
 
-        self.refresh_members_table()
+tk.Button(stats_tab, text="Show Statistics", command=statistics).pack(pady=40)
 
-    def refresh_members_table(self):
-        for item in self.tree_members.get_children():
-            self.tree_members.delete(item)
-        for m in self.library.members:
-            borrowed_str = ", ".join(m.borrowed_books) if m.borrowed_books else "None"
-            self.tree_members.insert("", "end", values=(m.id, m.name, m.phone, m.email, borrowed_str))
-
-    def add_member(self):
-        try:
-            self.library.add_member(
-                self.entry_m_id.get(),
-                self.entry_m_name.get(),
-                self.entry_m_phone.get(),
-                self.entry_m_email.get()
-            )
-            messagebox.showinfo("Success", "Member added successfully!")
-            self.refresh_members_table()
-            self.update_borrow_combos()
-        except ValueError as e:
-            messagebox.showerror("Error", str(e))
-
-    def delete_member(self):
-        selected = self.tree_members.selection()
-        if not selected:
-            messagebox.showwarning("Warning", "Please select a member from table!")
-            return
-        member_id = self.tree_members.item(selected[0])['values'][0]
-        self.library.delete_member(member_id)
-        self.refresh_members_table()
-        self.update_borrow_combos()
-        messagebox.showinfo("Success", "Member deleted successfully!")
-
-    def setup_borrow_page(self):
-        frame = ttk.LabelFrame(self.tab_borrow, text="Borrow or Return Book")
-        frame.pack(padx=20, pady=20, fill="x")
-
-        ttk.Label(frame, text="Select Member ID:").grid(row=0, column=0, padx=10, pady=10)
-        self.combo_members = ttk.Combobox(frame, state="readonly")
-        self.combo_members.grid(row=0, column=1, padx=10, pady=10)
-
-        ttk.Label(frame, text="Select Book ID:").grid(row=1, column=0, padx=10, pady=10)
-        self.combo_books = ttk.Combobox(frame, state="readonly")
-        self.combo_books.grid(row=1, column=1, padx=10, pady=10)
-
-        ttk.Button(frame, text="Borrow Book", command=self.borrow_book).grid(row=2, column=0, pady=15)
-        ttk.Button(frame, text="Return Book", command=self.return_book).grid(row=2, column=1, pady=15)
-
-        self.update_borrow_combos()
-
-    def update_borrow_combos(self):
-        self.combo_members["values"] = [m.id for m in self.library.members]
-        self.combo_books["values"] = [b.id for b in self.library.books]
-
-    def borrow_book(self):
-        try:
-            self.library.borrow_book(self.combo_members.get(), self.combo_books.get())
-            messagebox.showinfo("Success", "Book borrowed successfully!")
-            self.refresh_books_table(self.library.books)
-            self.refresh_members_table()
-        except ValueError as e:
-            messagebox.showerror("Error", str(e))
-
-    def return_book(self):
-        try:
-            self.library.return_book(self.combo_members.get(), self.combo_books.get())
-            messagebox.showinfo("Success", "Book returned successfully!")
-            self.refresh_books_table(self.library.books)
-            self.refresh_members_table()
-        except ValueError as e:
-            messagebox.showerror("Error", str(e))
-
-
-    def setup_search_page(self):
-        top_frame = ttk.Frame(self.tab_search)
-        top_frame.pack(fill="x", padx=10, pady=10)
-
-        ttk.Label(top_frame, text="Search Text:").pack(side="left", padx=5)
-        self.entry_search = ttk.Entry(top_frame)
-        self.entry_search.pack(side="left", padx=5)
-
-        ttk.Button(top_frame, text="Search", command=self.search_books).pack(side="left", padx=5)
-
-        ttk.Label(top_frame, text="Sort By:").pack(side="left", padx=(20, 5))
-        self.combo_sort = ttk.Combobox(top_frame, values=["Title A-Z", "Author A-Z", "Year Asc", "Year Desc"], state="readonly")
-        self.combo_sort.set("Title A-Z")
-        self.combo_sort.pack(side="left", padx=5)
-
-        ttk.Button(top_frame, text="Sort", command=self.sort_books).pack(side="left", padx=5)
-
-        self.tree_search = ttk.Treeview(self.tab_search, columns=("ID", "Title", "Author", "Year", "Category", "Status"), show="headings")
-        for col in ("ID", "Title", "Author", "Year", "Category", "Status"):
-            self.tree_search.heading(col, text=col)
-            self.tree_search.column(col, width=120)
-        self.tree_search.pack(fill="both", expand=True, padx=10, pady=5)
-
-    def search_books(self):
-        query = self.entry_search.get()
-        results = self.library.search_books(query)
-        self.refresh_search_table(results)
-
-    def sort_books(self):
-        criterion = self.combo_sort.get()
-        results = self.library.sort_books(criterion)
-        self.refresh_search_table(results)
-
-    def refresh_search_table(self, book_list):
-        for item in self.tree_search.get_children():
-            self.tree_search.delete(item)
-        for b in book_list:
-            status = "Available" if b.is_available else "Borrowed"
-            self.tree_search.insert("", "end", values=(b.id, b.title, b.author, b.year, b.category, status))
-
-    def setup_stats_page(self):
-        ttk.Button(self.tab_stats, text="Refresh Statistics", command=self.refresh_stats).pack(pady=15)
-        self.label_stats = ttk.Label(self.tab_stats, text="", font=("Arial", 14), justify="left")
-        self.label_stats.pack(pady=20)
-        self.refresh_stats()
-
-    def refresh_stats(self):
-        total_books = len(self.library.books)
-        available_books = sum(1 for b in self.library.books if b.is_available)
-        borrowed_books = total_books - available_books
-        total_members = len(self.library.members)
-
-        text = (
-            f"Total Books: {total_books}\n\n"
-            f"Available Books: {available_books}\n\n"
-            f"Borrowed Books: {borrowed_books}\n\n"
-            f"Total Members: {total_members}"
-        )
-        self.label_stats.config(text=text)
+show_books()
+show_members()
+root.mainloop()
