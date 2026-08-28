@@ -1,62 +1,72 @@
 [
   {
-    "memberId": "M001",
+    "member_id": "M001",
     "name": "Ali Ahmadov",
     "phone": "+994501234567",
-    "email": "ali.ahmadov@example.com"
+    "email": "ali.ahmadov@example.com",
+    "borrowed_books": []
   },
   {
-    "memberId": "M002",
+    "member_id": "M002",
     "name": "Leyla Mammadova",
     "phone": "+994502345678",
-    "email": "leyla.mammadova@example.com"
+    "email": "leyla.mammadova@example.com",
+    "borrowed_books": ["B002"]
   },
   {
-    "memberId": "M003",
+    "member_id": "M003",
     "name": "Murad Hasanov",
     "phone": "+994503456789",
-    "email": "murad.hasanov@example.com"
+    "email": "murad.hasanov@example.com",
+    "borrowed_books": []
   },
   {
-    "memberId": "M004",
+    "member_id": "M004",
     "name": "Aysel Aliyeva",
     "phone": "+994504567890",
-    "email": "aysel.aliyeva@example.com"
+    "email": "aysel.aliyeva@example.com",
+    "borrowed_books": []
   },
   {
-    "memberId": "M005",
+    "member_id": "M005",
     "name": "Rashad Karimov",
     "phone": "+994505678901",
-    "email": "rashad.karimov@example.com"
+    "email": "rashad.karimov@example.com",
+    "borrowed_books": ["B005"]
   },
   {
-    "memberId": "M006",
+    "member_id": "M006",
     "name": "Nigar Huseynova",
     "phone": "+994506789012",
-    "email": "nigar.huseynova@example.com"
+    "email": "nigar.huseynova@example.com",
+    "borrowed_books": []
   },
   {
-    "memberId": "M007",
+    "member_id": "M007",
     "name": "Tural Ismayilov",
     "phone": "+994507890123",
-    "email": "tural.ismayilov@example.com"
+    "email": "tural.ismayilov@example.com",
+    "borrowed_books": []
   },
   {
-    "memberId": "M008",
+    "member_id": "M008",
     "name": "Sabina Rahimova",
     "phone": "+994508901234",
-    "email": "sabina.rahimova@example.com"
+    "email": "sabina.rahimova@example.com",
+    "borrowed_books": ["B008"]
   },
   {
-    "memberId": "M009",
+    "member_id": "M009",
     "name": "Elvin Abdullayev",
     "phone": "+994509012345",
-    "email": "elvin.abdullayev@example.com"
+    "email": "elvin.abdullayev@example.com",
+    "borrowed_books": []
   },
   {
-    "memberId": "M010",
+    "member_id": "M010",
     "name": "Gunel Safarova",
     "phone": "+994510123456",
-    "email": "gunel.safarova@example.com"
+    "email": "gunel.safarova@example.com",
+    "borrowed_books": []
   }
 ]
