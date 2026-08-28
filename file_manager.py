@@ -1,12 +1,12 @@
 import json
 
-with open("users.json", "r", encoding="utf-8") as file:
+with open("data/users.json", "r", encoding="utf-8") as file:
     data = json.load(file)
 
 print(data)
 
 
-with open("books.json", "r",encoding = "utf-8") as file:
+with open("data/books.json", "r",encoding = "utf-8") as file:
     data_1 = json.load(file)
 
 
