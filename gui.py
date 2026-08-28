@@ -130,39 +130,24 @@ search.grid(row=3, column=1, padx=5)
 
 
 def search_book():
+    def search_book():
     try:
-        show_books(
-            library.search_books("Title", search.get())
-        )
+        value = search.get().strip()
+
+        if not value:
+            show_books()
+            return
+
+        books_found = [
+            book for book in library.get_books()
+            if value.lower() in str(book["book_id"]).lower()
+            or value.lower() in book["title"].lower()
+        ]
+
+        show_books(books_found)
 
     except ValueError as error:
         messagebox.showerror("Error", str(error))
-
-
-tk.Button(
-    books, text="Search", width=12, command=search_book
-).grid(row=3, column=2, padx=5)
-
-tk.Label(
-    books,
-    text="Sort:",
-    bg="lightblue",
-    font=("Arial", 10, "bold")
-).grid(row=3, column=3, padx=5)
-
-sort = ttk.Combobox(
-    books,
-    values=[
-        "Title A-Z",
-        "Author A-Z",
-        "Year Ascending",
-        "Year Descending",
-        "Category A-Z"
-    ],
-    state="readonly",
-    width=18
-)
-sort.grid(row=3, column=4, padx=5)
 
 
 def sort_books():
