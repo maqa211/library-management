@@ -1,9 +1,9 @@
 import json
 
 with open("data/users.json", "r", encoding="utf-8") as file:
-    data = json.load(file)
+    user = json.load(file)
 
-print(data)
+print(user)
 
 
 with open("data/books.json", "r",encoding = "utf-8") as file:
