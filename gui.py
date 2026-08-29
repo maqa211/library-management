@@ -9,8 +9,26 @@ window.title("Library Management")
 window.geometry("1050x680")
 window.configure(bg="lightblue")
 
+dark = False
+
+def toggle_mode():
+    global dark
+    dark = not dark
+    bg = "#222222" if dark else "lightblue"
+    fg = "white" if dark else "black"
+    window.configure(bg=bg)
+    for frame in [books, members, borrow, stats]:
+        frame.configure(bg=bg)
+        for widget in frame.winfo_children():
+            if isinstance(widget, tk.Label):
+                widget.configure(bg=bg, fg=fg)
+    mode_button.config(text="Light Mode" if dark else "Dark Mode")
+
 tk.Label(window, text="Library Management", font=("Arial", 24, "bold"),
          bg="lightblue").pack(pady=15)
+
+mode_button = tk.Button(window, text="Dark Mode", command=toggle_mode)
+mode_button.place(relx=0.98, y=15, anchor="ne")
 
 tabs = ttk.Notebook(window)
 tabs.pack(fill="both", expand=True, padx=15, pady=10)
@@ -48,8 +66,7 @@ def show_books(data=None):
     for b in library.get_books() if data is None else data:
         book_list.insert("", "end", values=(
             b["book_id"], b["title"], b["author"], b["year"],
-            b["category"], "Available" if b["availability"] else "Borrowed"
-        ))
+            b["category"], "Available" if b["availability"] else "Borrowed"))
 
 def add_book():
     if not all(e.get().strip() for e in entries):
@@ -101,6 +118,9 @@ def search_book():
 tk.Button(books, text="Search", width=12,
           command=search_book).grid(row=3, column=2)
 
+tk.Label(books, text="Sort:", bg="lightblue",
+         font=("Arial", 10, "bold")).grid(row=3, column=3)
+
 sort = ttk.Combobox(
     books,
     values=["Title A-Z", "Author A-Z", "Year Ascending",
@@ -108,10 +128,12 @@ sort = ttk.Combobox(
     state="readonly", width=18)
 sort.grid(row=3, column=4)
 
-tk.Button(books, text="Sort", width=12,
-          command=lambda: error_action(
-              lambda: show_books(library.sort_books(sort.get()))
-          )).grid(row=3, column=5)
+tk.Button(
+    books, text="Sort", width=12,
+    command=lambda: error_action(
+        lambda: show_books(library.sort_books(sort.get()))
+    )
+).grid(row=3, column=5)
 
 book_list = ttk.Treeview(
     books,
