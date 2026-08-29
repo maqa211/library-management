@@ -17,18 +17,19 @@ def toggle_mode():
     bg = "#222222" if dark else "lightblue"
     fg = "white" if dark else "black"
     window.configure(bg=bg)
+
     for frame in [books, members, borrow, stats]:
         frame.configure(bg=bg)
-        for widget in frame.winfo_children():
+        for widget in frame.children.values():
             if isinstance(widget, tk.Label):
                 widget.configure(bg=bg, fg=fg)
+
     mode_button.config(text="Light Mode" if dark else "Dark Mode")
 
-tk.Label(window, text="Library Management", font=("Arial", 24, "bold"),
-         bg="lightblue").pack(pady=15)
+tk.Label(window,text="Library Management",font=("Arial", 24, "bold"), bg="lightblue").pack(pady=15)
 
-mode_button = tk.Button(window, text="Dark Mode", command=toggle_mode)
-mode_button.place(relx=0.98, y=15, anchor="ne")
+mode_button = tk.Button(window,text="Dark Mode",command=toggle_mode)
+mode_button.pack(anchor="ne",padx=10,pady=10)
 
 tabs = ttk.Notebook(window)
 tabs.pack(fill="both", expand=True, padx=15, pady=10)
